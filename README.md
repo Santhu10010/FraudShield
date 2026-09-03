@@ -1,72 +1,58 @@
-# FraudShield — UPI Fraud Detection Dashboard
+# FraudShield — Enterprise UPI Transaction Fraud Detection System
 
-A TanStack Start (React 19 + Vite 7) app with a Supabase-backed auth + transaction
-ledger and an AI chatbot powered by the Lovable AI Gateway.
+FraudShield is an enterprise-grade real-time transaction monitoring and risk intelligence platform built with React 19, TypeScript, TanStack Router, and Supabase. The platform provides real-time fraud scoring, automated anomaly detection, SHAP model explainability, role-based access control (RBAC), and an immutable administrative audit ledger.
 
-## Run locally
+---
+
+## Key Capabilities
+
+* **Hybrid Fraud Scoring Engine:** Combines deterministic, rule-based heuristics (high-velocity, location anomalies, threshold limits) with predictive ML classification to calculate real-time transaction risk scores ($0\text{--}100$).
+* **SHAP Feature Attribution:** Exposes granular SHAP (SHapley Additive exPlanations) risk breakdowns for flagged transactions to provide immediate context on feature weights (e.g., location mismatch vs. amount spike).
+* **Simulated Real-Time Streaming:** Client-side WebSocket/SSE transaction ingestion pipeline with low-latency status resolution, animated ledger updating, and instant risk alerts.
+* **Security & Audit Hardening:** Strict role-based access control (`ADMIN` vs `ANALYST` access) backed by JWT authentication, DTO-driven API response layers, and an immutable administrative audit ledger logging status overrides and policy changes.
+* **Refined Editorial UI/UX:** High-contrast, accessibility-focused editorial visual design with clean typography and subtle, high-contrast status indicators.
+
+---
+
+## Technical Architecture & Layout
+---
+
+## Tech Stack
+
+* **Frontend Framework:** React 19, TypeScript, TanStack Router
+* **Build System:** Vite 7
+* **Styling & Icons:** Tailwind CSS, Lucide React
+* **Backend & Database:** Supabase (PostgreSQL, Row Level Security, Auth Middleware)
+* **Runtime & Package Manager:** Bun / Node.js
+
+---
+
+## Local Development Setup
 
 ### 1. Prerequisites
-- [Bun](https://bun.sh) ≥ 1.1 (recommended) **or** Node.js ≥ 20 with npm
-- A Supabase project (the included `.env` already points to the hosted Lovable Cloud
-  backend so you can run it as-is)
+* [Bun](https://bun.sh) ≥ 1.1 (recommended) or Node.js ≥ 20
+* Supabase Account & CLI (optional for local database migrations)
 
-### 2. Install
-```bash
+### 2. Installation
+``bash
+# Clone the repository
+git clone [https://github.com/Santhu10010/fraudshield.git](https://github.com/Santhu10010/fraudshield.git)
+cd fraudshield
+
+# Install dependencies
 bun install
 # or
 npm install
-```
-
-### 3. Environment
-The `.env` file in the repo root is already populated with the publishable Supabase
-keys for the bundled backend. You only need to edit it if you want to point the app
-at your own Supabase project:
-
-```env
-VITE_SUPABASE_URL="https://<your-project>.supabase.co"
+VITE_SUPABASE_URL="https://<your-project-ref>.supabase.co"
 VITE_SUPABASE_PUBLISHABLE_KEY="<your-anon-key>"
 VITE_SUPABASE_PROJECT_ID="<your-project-ref>"
-SUPABASE_URL="https://<your-project>.supabase.co"
+SUPABASE_URL="https://<your-project-ref>.supabase.co"
 SUPABASE_PUBLISHABLE_KEY="<your-anon-key>"
-```
-
-If you run your **own** Supabase project, also apply the SQL files in
-`supabase/migrations/` (in order) via the Supabase SQL editor or CLI.
-
-### 4. AI chatbot (optional)
-The chatbot endpoint at `src/routes/api/chat.ts` calls the Lovable AI Gateway and
-expects `LOVABLE_API_KEY` in the environment. When running outside Lovable, add it
-to `.env`:
-
-```env
-LOVABLE_API_KEY="<your-lovable-ai-gateway-key>"
-```
-
-Without this key the rest of the app still works — only the chatbot will return an
-error.
-
-### 5. Start the dev server
-```bash
 bun run dev
 # or
 npm run dev
-```
-
-The app will be available at [http://localhost:5173](http://localhost:5173).
-
-### 6. Production build
-```bash
+# Create optimized production build
 bun run build
+
+# Preview production build locally
 bun run preview
-```
-
-## Project layout
-- `src/routes/` — file-based routes (TanStack Router)
-- `src/components/` — UI components (StatCard, TransactionForm, Chatbot, …)
-- `src/lib/fraud-engine.ts` — heuristic fraud-scoring logic
-- `src/integrations/supabase/` — Supabase client + generated types
-- `supabase/migrations/` — database schema (auth profiles, transactions, RLS)
-
-## Tech stack
-React 19 · TanStack Start · Vite 7 · Tailwind CSS v4 · Supabase · Framer Motion ·
-Chart.js · Lovable AI Gateway (Gemini)
