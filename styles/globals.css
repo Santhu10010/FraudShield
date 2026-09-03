@@ -1,0 +1,98 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.25rem;
+
+  /* Old-School Editorial Palette (Warm Linen, Typewriter Slate, Bookbinding Muted Tones) */
+  --background: 38 28% 95%;        /* Warm vintage linen / off-white paper (#F6F4EF) */
+  --foreground: 220 15% 18%;       /* Deep typewriter charcoal / muted slate (#272A2E) */
+  --card: 38 30% 98%;              /* Soft cream card background (#FAF9F5) */
+  --card-foreground: 220 15% 18%;
+  --popover: 38 30% 98%;
+  --popover-foreground: 220 15% 18%;
+  --primary: 220 15% 24%;          /* Matte vintage slate primary (#34383D) */
+  --primary-foreground: 38 28% 95%;
+  --secondary: 35 18% 88%;         /* Muted warm taupe / aged paper accent (#E5E1D8) */
+  --secondary-foreground: 220 15% 18%;
+  --muted: 35 15% 90%;             /* Soft warm gray (#EAE6DF) */
+  --muted-foreground: 215 10% 45%; /* Subtle muted graphite text (#666F7A) */
+  --border: 35 12% 82%;            /* Crisp, classic bookbinding border (#D8D3C8) */
+  --input: 35 12% 82%;
+  --ring: 220 15% 24%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html, body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Newsreader', 'Times New Roman', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.bg-primary {
+  background-color: hsl(var(--primary));
+}
+
+.text-primary {
+  color: hsl(var(--primary));
+}
+
+.editorial-card {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius);
+}
+
+.glass, .glass-strong {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius);
+}
+
+.neon-glow, .drop-shadow-glow {
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.05);
+  border: 1px solid hsl(var(--border));
+}
+
+.gradient-primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.gradient-accent {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+
+.gradient-danger {
+  background-color: #7A2E2E;
+  color: #FAF9F5;
+}
+
+.gradient-bg {
+  background-color: hsl(var(--background));
+}
+
+.text-gradient {
+  color: hsl(var(--foreground));
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: hsl(var(--background)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }

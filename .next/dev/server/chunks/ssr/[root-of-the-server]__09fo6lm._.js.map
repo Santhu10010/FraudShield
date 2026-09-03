@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/santh/Desktop/fraudshield/fraudshield-master/pages/index.tsx"],"sourcesContent":["// pages/index.tsx\nimport { useEffect } from 'react';\nimport { useRouter } from 'next/router';\n\nexport default function Home() {\n  const router = useRouter();\n  useEffect(() => {\n    router.replace('/dashboard');\n  }, [router]);\n  return null;\n}\n"],"names":["Home","router","replace"],"mappings":";;;;AAAA,kBAAkB;AAClB;AACA;;;AAEe,SAASA;IACtB,MAAMC,SAAS,IAAA,oIAAS;IACxB,IAAA,gHAAS,EAAC;QACRA,OAAOC,OAAO,CAAC;IACjB,GAAG;QAACD;KAAO;IACX,OAAO;AACT"}}]
+}
