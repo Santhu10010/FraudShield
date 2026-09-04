@@ -12,8 +12,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   useEffect(() => {
     if (loading) return;
 
-    const localAuth = typeof window !== 'undefined' && localStorage.getItem('authenticated') === 'true';
-    const isAuthenticated = !!user || localAuth;
+    const isAuthenticated = !!user;
 
     if (!isAuthenticated && !isLoginPage) {
       router.replace('/login');

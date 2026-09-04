@@ -17,25 +17,15 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Try Supabase auth if connected
       const { error } = await signIn(email, password);
       if (error) {
-        // Fallback to local session demo mode
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('authenticated', 'true');
-        }
-        toast.success('Signed in as demo security analyst');
-        router.replace('/dashboard');
+        toast.error(error.message);
       } else {
         toast.success('Successfully authenticated');
         router.replace('/dashboard');
       }
     } catch {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('authenticated', 'true');
-      }
-      toast.success('Demo session started');
-      router.replace('/dashboard');
+      toast.error('Unable to authenticate. Please try again.');
     } finally {
       setIsLoading(false);
     }

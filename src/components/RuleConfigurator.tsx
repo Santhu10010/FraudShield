@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sliders, X, Save } from "lucide-react";
 import { auditLogger } from "@/lib/audit-logger";
+import { setFraudRules } from "@/lib/fraud-engine";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -13,15 +14,15 @@ interface RuleConfiguratorProps {
 export default function RuleConfigurator({ isOpen, onClose }: RuleConfiguratorProps) {
   const { user } = useAuth();
   const [highAmount, setHighAmount] = useState(500000);
-  const [velocityWindow, setVelocityWindow] = useState(60);
 
   const handleSave = () => {
+    setFraudRules({ highAmountThreshold: highAmount });
     if (user) {
       auditLogger.log(
         user.email || "unknown",
         user.role,
         "Update Rule Thresholds",
-        `High Amount: ${highAmount}, Velocity Window: ${velocityWindow}m`
+        `High Amount: ${highAmount}`
       );
     }
     toast.success("Rule thresholds updated and audited.");
@@ -77,24 +78,6 @@ export default function RuleConfigurator({ isOpen, onClose }: RuleConfiguratorPr
               </div>
             </div>
 
-            <div className="pt-4 border-t border-border">
-              <label className="text-sm font-bold text-foreground font-editorial block mb-1">Velocity Time Window (Mins)</label>
-              <p className="text-xs text-muted-foreground font-mono mb-3">Timeframe to group rapid transactions.</p>
-              <div className="flex items-center gap-4">
-                <input 
-                  type="range" 
-                  min="5" 
-                  max="120" 
-                  step="5"
-                  value={velocityWindow} 
-                  onChange={(e) => setVelocityWindow(Number(e.target.value))}
-                  className="flex-1 accent-foreground"
-                />
-                <span className="font-mono text-sm w-20 text-right border border-border px-2 py-1 rounded bg-muted/20">
-                  {velocityWindow}m
-                </span>
-              </div>
-            </div>
           </div>
           
           <div className="bg-muted/40 border border-border p-4 rounded-md">

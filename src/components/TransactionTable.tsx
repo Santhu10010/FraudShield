@@ -10,6 +10,18 @@ const statusBadge: Record<Transaction["status"], string> = {
   fraud: "bg-[#F9EBEB] text-[#7A2E2E] border-[#E8C0C0]",
 };
 
+const statusLabel: Record<Transaction["status"], string> = {
+  safe: "🟢 SAFE",
+  suspicious: "🟡 SUSPICIOUS",
+  fraud: "🔴 FRAUD",
+};
+
+const csvCell = (value: unknown) => {
+  const text = String(value ?? "");
+  const safeText = /^[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replace(/"/g, '""')}"`;
+};
+
 export default function TransactionTable({ transactions }: { transactions: Transaction[] }) {
   const [selectedTxIds, setSelectedTxIds] = useState<Set<string>>(new Set());
   const [expandedTxIds, setExpandedTxIds] = useState<Set<string>>(new Set());
@@ -45,7 +57,7 @@ export default function TransactionTable({ transactions }: { transactions: Trans
     const headers = ["ID", "Amount", "Location", "Timestamp", "Score", "Status"];
     const rows = selectedTxs.map(t => [
       t.id, t.amount, t.location, t.timestamp, t.fraudScore, t.status
-    ].join(","));
+    ].map(csvCell).join(","));
     
     const csvContent = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -131,7 +143,7 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                   <td className="px-4 py-3.5 text-xs font-mono font-bold text-foreground">{tx.fraudScore}%</td>
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-mono font-medium rounded border ${statusBadge[tx.status]}`}>
-                      {tx.status.toUpperCase()}
+                      {statusLabel[tx.status]}
                     </span>
                   </td>
                   <td className="px-4 py-3.5 text-xs font-mono text-muted-foreground">

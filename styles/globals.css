@@ -7,19 +7,19 @@
   --radius: 0.25rem;
 
   /* Old-School Editorial Palette (Warm Linen, Typewriter Slate, Bookbinding Muted Tones) */
-  --background: 38 28% 95%;        /* Warm vintage linen / off-white paper (#F6F4EF) */
-  --foreground: 220 15% 18%;       /* Deep typewriter charcoal / muted slate (#272A2E) */
-  --card: 38 30% 98%;              /* Soft cream card background (#FAF9F5) */
+  --background: 38 28% 95%;
+  --foreground: 220 15% 18%;
+  --card: 38 30% 98%;
   --card-foreground: 220 15% 18%;
   --popover: 38 30% 98%;
   --popover-foreground: 220 15% 18%;
-  --primary: 220 15% 24%;          /* Matte vintage slate primary (#34383D) */
+  --primary: 220 15% 24%;
   --primary-foreground: 38 28% 95%;
-  --secondary: 35 18% 88%;         /* Muted warm taupe / aged paper accent (#E5E1D8) */
+  --secondary: 35 18% 88%;
   --secondary-foreground: 220 15% 18%;
-  --muted: 35 15% 90%;             /* Soft warm gray (#EAE6DF) */
-  --muted-foreground: 215 10% 45%; /* Subtle muted graphite text (#666F7A) */
-  --border: 35 12% 82%;            /* Crisp, classic bookbinding border (#D8D3C8) */
+  --muted: 35 15% 90%;
+  --muted-foreground: 215 10% 45%;
+  --border: 35 12% 82%;
   --input: 35 12% 82%;
   --ring: 220 15% 24%;
 }
@@ -96,3 +96,84 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar-track { background: hsl(var(--background)); }
 ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    --background: 220 15% 8%;
+    --foreground: 38 28% 90%;
+    --card: 220 15% 12%;
+    --card-foreground: 38 28% 90%;
+    --popover: 220 15% 12%;
+    --popover-foreground: 38 28% 90%;
+    --primary: 38 28% 76%;
+    --primary-foreground: 220 15% 8%;
+    --secondary: 35 18% 20%;
+    --secondary-foreground: 38 28% 90%;
+    --muted: 35 15% 18%;
+    --muted-foreground: 215 10% 65%;
+    --border: 35 12% 30%;
+    --input: 35 12% 30%;
+    --ring: 38 28% 76%;
+  }
+
+  .editorial-card, .glass, .glass-strong {
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  [class*="bg-[#EBF0EC]"], [class*="bg-[#F9F4EB]"], [class*="bg-[#F9EBEB]"], [class*="bg-white/60"] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  [class*="text-[#2D4A36]"] { color: hsl(145 35% 68%) !important; }
+  [class*="text-[#7A541E]"] { color: hsl(38 65% 70%) !important; }
+  [class*="text-[#7A2E2E]"] { color: hsl(0 55% 72%) !important; }
+  [class*="border-[#C8D6CB]"], [class*="border-[#E8D9C0]"], [class*="border-[#E8C0C0]"] {
+    border-color: hsl(var(--border)) !important;
+  }
+}
+
+.theme-light {
+  --background: 38 28% 95%;
+  --foreground: 220 15% 18%;
+  --card: 38 30% 98%;
+  --card-foreground: 220 15% 18%;
+  --popover: 38 30% 98%;
+  --popover-foreground: 220 15% 18%;
+  --primary: 220 15% 24%;
+  --primary-foreground: 38 28% 95%;
+  --secondary: 35 18% 88%;
+  --secondary-foreground: 220 15% 18%;
+  --muted: 35 15% 90%;
+  --muted-foreground: 215 10% 45%;
+  --border: 35 12% 82%;
+  --input: 35 12% 82%;
+  --ring: 220 15% 24%;
+}
+
+.theme-dark {
+  --background: 220 15% 8%;
+  --foreground: 38 28% 90%;
+  --card: 220 15% 12%;
+  --card-foreground: 38 28% 90%;
+  --popover: 220 15% 12%;
+  --popover-foreground: 38 28% 90%;
+  --primary: 38 28% 76%;
+  --primary-foreground: 220 15% 8%;
+  --secondary: 35 18% 20%;
+  --secondary-foreground: 38 28% 90%;
+  --muted: 35 15% 18%;
+  --muted-foreground: 215 10% 65%;
+  --border: 35 12% 30%;
+  --input: 35 12% 30%;
+  --ring: 38 28% 76%;
+}
+
+.theme-dark .editorial-card, .theme-dark .glass, .theme-dark .glass-strong {
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+.theme-dark [class*="bg-[#EBF0EC]"], .theme-dark [class*="bg-[#F9F4EB]"], .theme-dark [class*="bg-[#F9EBEB]"], .theme-dark [class*="bg-white/60"] { background-color: hsl(var(--muted)) !important; }
+.theme-dark [class*="text-[#2D4A36]"] { color: hsl(145 35% 68%) !important; }
+.theme-dark [class*="text-[#7A541E]"] { color: hsl(38 65% 70%) !important; }
+.theme-dark [class*="text-[#7A2E2E]"] { color: hsl(0 55% 72%) !important; }
+.theme-dark [class*="border-[#C8D6CB]"], .theme-dark [class*="border-[#E8D9C0]"], .theme-dark [class*="border-[#E8C0C0]"] { border-color: hsl(var(--border)) !important; }
+

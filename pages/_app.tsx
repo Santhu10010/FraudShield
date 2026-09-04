@@ -11,7 +11,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <ProtectedRoute>
         <Component {...pageProps} />
       </ProtectedRoute>
-      <Toaster richColors theme="light" position="top-right" />
+      <Toaster richColors theme="system" position="top-right" />
     </AuthProvider>
   );
 }

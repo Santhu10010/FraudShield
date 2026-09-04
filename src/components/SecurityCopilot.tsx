@@ -29,6 +29,9 @@ interface SecurityCopilotProps {
   transactions?: Transaction[];
 }
 
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
 export default function SecurityCopilot({ transactions = [] }: SecurityCopilotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -95,6 +98,7 @@ export default function SecurityCopilot({ transactions = [] }: SecurityCopilotPr
         .reduce((acc, t) => acc + t.amount, 0);
 
       return `### 🛡️ Executive Transaction Security Brief\n\n- **Total Monitored Volume**: ₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}\n- **Direct Capital Protected (Blocked)**: **₹${atRiskAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}**\n- **System Clearance Rate**: **${((safeCount / (transactions.length || 1)) * 100).toFixed(1)}% safe throughput**\n- **False Positive Ratio**: < 0.4%\n- **Average ML Latency**: 24ms per decision\n\nAll real-time rule sets operating within normal compliance thresholds.`;
+        return `### 🛡️ Transaction Security Brief\n\n- **Total Monitored Volume**: ₹${totalAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}\n- **Flagged Transaction Volume**: **₹${atRiskAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}**\n- **Safe Throughput**: **${((safeCount / (transactions.length || 1)) * 100).toFixed(1)}%**\n- **Suspicious Records**: **${suspiciousCount}**\n- **Fraud Records**: **${fraudCount}**\n\nPerformance and false-positive metrics are unavailable because this dashboard is using heuristic telemetry.`;
     }
 
     if (q.includes('mitigat') || q.includes('recommend') || q.includes('action')) {
@@ -263,7 +267,7 @@ export default function SecurityCopilot({ transactions = [] }: SecurityCopilotPr
                     <div
                       className="space-y-1.5 text-xs"
                       dangerouslySetInnerHTML={{
-                        __html: msg.text
+                        __html: escapeHtml(msg.text)
                           .replace(/^### (.*$)/gim, '<div class="font-editorial font-bold text-foreground text-xs mt-1 mb-0.5">$1</div>')
                           .replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground font-semibold">$1</strong>')
                           .replace(/`([^`]+)`/g, '<code class="px-1 py-0.2 rounded bg-muted text-foreground font-mono text-[10px] border border-border">$1</code>')

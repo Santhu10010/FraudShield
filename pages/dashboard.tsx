@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { generateMockTransactions, type Transaction } from '@/lib/fraud-engine';
 import { supabase } from '@/integrations/supabase/client';
+import { isSupabaseConfigured } from '@/integrations/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Activity, ShieldAlert, ShieldCheck, TrendingUp } from 'lucide-react';
 
@@ -25,7 +26,7 @@ export default function Dashboard() {
 
   // redirect if unauthenticated
   useEffect(() => {
-    const isAuthed = !!user || (typeof window !== 'undefined' && localStorage.getItem('authenticated') === 'true');
+    const isAuthed = !!user;
     if (!loading && !isAuthed) router.replace('/login');
   }, [user, loading, router]);
 
@@ -49,7 +50,7 @@ export default function Dashboard() {
 
   const handleNewTransaction = useCallback(async (tx: Transaction)=>{
     setTransactions(prev=>[tx,...prev]);
-    if (user) {
+    if (user && isSupabaseConfigured) {
       const { error } = await supabase.from('transaction_ledger').insert({
         user_id: user.id,
         transaction_id: tx.id,
@@ -66,7 +67,7 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const isAuthed = !!user || (typeof window !== 'undefined' && localStorage.getItem('authenticated') === 'true');
+  const isAuthed = !!user;
 
   if (loading || !isAuthed) {
     return (
@@ -90,9 +91,9 @@ export default function Dashboard() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard title="Total Transactions" value={stats.total} icon={Activity} variant="blue" delay={0.1} trend="+12% this week" />
-                <StatCard title="Safe" value={stats.safe} icon={ShieldCheck} variant="cyan" delay={0.2} trend={`${stats.total? ((stats.safe/stats.total)*100).toFixed(1):0}% of total`} />
-                <StatCard title="Suspicious" value={stats.suspicious} icon={TrendingUp} variant="purple" delay={0.3} trend="Needs review" />
-                <StatCard title="Fraud Detected" value={stats.fraud} icon={ShieldAlert} variant="danger" delay={0.4} trend={`${stats.total? ((stats.fraud/stats.total)*100).toFixed(1):0}% rate`} />
+                <StatCard title="🟢 Safe" value={stats.safe} icon={ShieldCheck} variant="cyan" delay={0.2} trend={`${stats.total? ((stats.safe/stats.total)*100).toFixed(1):0}% of total`} />
+                <StatCard title="🟡 Suspicious" value={stats.suspicious} icon={TrendingUp} variant="purple" delay={0.3} trend="Needs review" />
+                <StatCard title="🔴 Fraud Detected" value={stats.fraud} icon={ShieldAlert} variant="danger" delay={0.4} trend={`${stats.total? ((stats.fraud/stats.total)*100).toFixed(1):0}% rate`} />
               </div>
               <FraudChart safeCount={stats.safe} suspiciousCount={stats.suspicious} fraudCount={stats.fraud} dailyData={dailyData} />
               <TransactionTable transactions={transactions} />

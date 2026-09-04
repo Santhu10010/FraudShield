@@ -28,6 +28,14 @@ const SUSPICIOUS_BEHAVIORS = [
   "unknown upi id",
 ];
 
+let fraudRules = { highAmountThreshold: 500000 };
+
+export function setFraudRules(rules: { highAmountThreshold: number }) {
+  if (Number.isFinite(rules.highAmountThreshold) && rules.highAmountThreshold > 0) {
+    fraudRules = { highAmountThreshold: rules.highAmountThreshold };
+  }
+}
+
 export const INDIAN_CITIES = [
   "Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata", "Pune", "Ahmedabad",
   "Jaipur", "Lucknow", "Surat", "Kanpur", "Nagpur", "Indore", "Thane", "Bhopal",
@@ -40,6 +48,14 @@ export function checkFraud(input: FraudCheckInput): {
   status: "safe" | "suspicious" | "fraud";
   featureAttribution: Record<string, number>;
 } {
+  if (!Number.isFinite(input.amount) || input.amount < 0 || !input.location.trim() || Number.isNaN(new Date(input.time).getTime())) {
+    return {
+      score: 0,
+      status: "safe",
+      featureAttribution: { amountSpike: 0, locationMismatch: 0, velocity: 0, unusualHours: 0 },
+    };
+  }
+
   let score = 0;
   const featureAttribution: Record<string, number> = {
     amountSpike: 0,
@@ -48,8 +64,8 @@ export function checkFraud(input: FraudCheckInput): {
     unusualHours: 0,
   };
 
-  if (input.amount > 500000) { score += 35; featureAttribution.amountSpike = 35; }
-  else if (input.amount > 100000) { score += 20; featureAttribution.amountSpike = 20; }
+  if (input.amount > fraudRules.highAmountThreshold) { score += 35; featureAttribution.amountSpike = 35; }
+  else if (input.amount > fraudRules.highAmountThreshold * 0.2) { score += 20; featureAttribution.amountSpike = 20; }
   else if (input.amount > 50000) { score += 10; featureAttribution.amountSpike = 10; }
 
   if (HIGH_RISK_LOCATIONS.some((l) => input.location.toLowerCase().includes(l.toLowerCase()))) {
@@ -71,8 +87,6 @@ export function checkFraud(input: FraudCheckInput): {
     }
   });
 
-  const noise = Math.random() * 10 - 5;
-  score += noise;
   score = Math.max(0, Math.min(100, Math.round(score)));
 
   const status = score >= 70 ? "fraud" : score >= 40 ? "suspicious" : "safe";

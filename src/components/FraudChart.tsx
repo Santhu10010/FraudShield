@@ -12,6 +12,7 @@ import {
   Filler,
 } from "chart.js";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement, Filler);
 
@@ -23,13 +24,28 @@ interface FraudChartProps {
 }
 
 export default function FraudChart({ safeCount, suspiciousCount, fraudCount, dailyData }: FraudChartProps) {
+  const readDarkMode = () => typeof window !== "undefined" && (document.documentElement.classList.contains("theme-dark") || (!document.documentElement.classList.contains("theme-light") && window.matchMedia("(prefers-color-scheme: dark)").matches));
+  const [isDarkMode, setIsDarkMode] = useState(readDarkMode);
+
+  useEffect(() => {
+    const handleThemeChange = () => setIsDarkMode(readDarkMode());
+    window.addEventListener("fraudshield-theme-change", handleThemeChange);
+    handleThemeChange();
+    return () => window.removeEventListener("fraudshield-theme-change", handleThemeChange);
+  }, []);
+
+  const chartText = isDarkMode ? "#EDE7DE" : "#272A2E";
+  const chartMutedText = isDarkMode ? "#9DA4AF" : "#666F7A";
+  const chartGrid = isDarkMode ? "rgba(180, 168, 148, 0.25)" : "rgba(216, 211, 200, 0.6)";
+  const chartSurface = isDarkMode ? "#1A1D23" : "#FAF9F5";
+
   const doughnutData = {
     labels: ["Safe", "Suspicious", "Fraud"],
     datasets: [
       {
         data: [safeCount, suspiciousCount, fraudCount],
         backgroundColor: ["#2D4A36", "#7A541E", "#7A2E2E"],
-        borderColor: "#FAF9F5",
+        borderColor: chartSurface,
         borderWidth: 2,
       },
     ],
@@ -65,11 +81,11 @@ export default function FraudChart({ safeCount, suspiciousCount, fraudCount, dai
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { labels: { color: "#272A2E", font: { family: "JetBrains Mono", size: 11 } } },
+      legend: { labels: { color: chartText, font: { family: "JetBrains Mono", size: 11 } } },
     },
     scales: {
-      x: { ticks: { color: "#666F7A", font: { family: "JetBrains Mono", size: 10 } }, grid: { color: "rgba(216, 211, 200, 0.6)" } },
-      y: { ticks: { color: "#666F7A", font: { family: "JetBrains Mono", size: 10 } }, grid: { color: "rgba(216, 211, 200, 0.6)" } },
+      x: { ticks: { color: chartMutedText, font: { family: "JetBrains Mono", size: 10 } }, grid: { color: chartGrid } },
+      y: { ticks: { color: chartMutedText, font: { family: "JetBrains Mono", size: 10 } }, grid: { color: chartGrid } },
     },
   };
 
@@ -106,7 +122,7 @@ export default function FraudChart({ safeCount, suspiciousCount, fraudCount, dai
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
-                legend: { position: "bottom", labels: { color: "#272A2E", boxWidth: 10, font: { family: "JetBrains Mono", size: 10 } } },
+                legend: { position: "bottom", labels: { color: chartText, boxWidth: 10, font: { family: "JetBrains Mono", size: 10 } } },
               },
             }}
           />

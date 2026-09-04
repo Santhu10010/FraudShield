@@ -1,6 +1,6 @@
 # FraudShield — Enterprise UPI Transaction Fraud Detection System
 
-FraudShield is an enterprise-grade real-time transaction monitoring and risk intelligence platform built with React 19, TypeScript, TanStack Router, and Supabase. The platform provides real-time fraud scoring, automated anomaly detection, SHAP model explainability, role-based access control (RBAC), and an immutable administrative audit ledger.
+FraudShield is an enterprise-grade real-time transaction monitoring and risk intelligence platform built with Next.js, TypeScript, and Supabase. The platform provides real-time fraud scoring, automated anomaly detection, SHAP model explainability, role-based access control (RBAC), and an administrative audit ledger.
 
 ---
 
@@ -34,7 +34,7 @@ FraudShield is an enterprise-grade real-time transaction monitoring and risk int
 * Supabase Account & CLI (optional for local database migrations)
 
 ### 2. Installation
-``bash
+```bash
 # Clone the repository
 git clone [https://github.com/Santhu10010/fraudshield.git](https://github.com/Santhu10010/fraudshield.git)
 cd fraudshield
@@ -51,8 +51,16 @@ SUPABASE_PUBLISHABLE_KEY="<your-anon-key>"
 bun run dev
 # or
 npm run dev
-# Create optimized production build
-bun run build
+```
 
-# Preview production build locally
-bun run preview
+The app will be available at `http://localhost:3000`.
+
+If you run your own Supabase project, apply the SQL files in
+`supabase/migrations/` in order using the Supabase SQL editor or CLI.
+
+## Project layout
+- `pages/` — Next.js pages
+- `src/components/` — UI components (StatCard, TransactionForm, ledger, …)
+- `src/lib/fraud-engine.ts` — heuristic fraud-scoring logic
+- `src/integrations/supabase/` — Supabase client + generated types
+- `supabase/migrations/` — database schema (auth profiles, transactions, RLS)

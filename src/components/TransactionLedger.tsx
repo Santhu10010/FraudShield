@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Download, Filter, IndianRupee, ShieldAlert, ShieldCheck, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import GlassCard from "./GlassCard";
 
@@ -15,6 +16,12 @@ interface LedgerEntry {
   status: "safe" | "suspicious" | "fraud";
   analyzed_at: string;
 }
+
+const csvCell = (value: unknown) => {
+  const text = String(value ?? "");
+  const safeText = /^[=+\-@]/.test(text) ? `'${text}` : text;
+  return `"${safeText.replace(/"/g, '""')}"`;
+};
 
 const statusConfig = {
   safe: {
@@ -37,22 +44,35 @@ const statusConfig = {
   },
 } as const;
 
+const statusLabel = {
+  all: "🌈 ALL",
+  safe: "🟢 SAFE",
+  suspicious: "🟡 SUSPICIOUS",
+  fraud: "🔴 FRAUD",
+} as const;
+
 export default function TransactionLedger() {
   const { user } = useAuth();
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "safe" | "suspicious" | "fraud">("all");
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !isSupabaseConfigured) {
+      setLoading(false);
+      return;
+    }
     let mounted = true;
 
     (async () => {
       setLoading(true);
-      const { data } = await supabase
+      setError(null);
+      const { data, error: queryError } = await supabase
         .from("transaction_ledger")
         .select("*")
         .order("analyzed_at", { ascending: false });
+      if (queryError) setError(queryError.message);
       if (mounted && data) setEntries(data as LedgerEntry[]);
       if (mounted) setLoading(false);
     })();
@@ -61,7 +81,7 @@ export default function TransactionLedger() {
       .channel("ledger-changes")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "transaction_ledger" },
+        { event: "INSERT", schema: "public", table: "transaction_ledger", filter: `user_id=eq.${user.id}` },
         (payload) => setEntries((prev) => [payload.new as LedgerEntry, ...prev]),
       )
       .subscribe();
@@ -85,7 +105,7 @@ export default function TransactionLedger() {
     const headers = "Transaction ID,Amount (INR),Location,Behavior,Fraud Score,Status,Analyzed At\n";
     const rows = filtered
       .map((e) =>
-        `${e.transaction_id},${e.amount},${e.location},${e.user_behavior || "N/A"},${e.fraud_score}%,${e.status},${new Date(e.analyzed_at).toLocaleString("en-IN")}`,
+        [e.transaction_id, e.amount, e.location, e.user_behavior || "N/A", `${e.fraud_score}%`, e.status, new Date(e.analyzed_at).toLocaleString("en-IN")].map(csvCell).join(","),
       )
       .join("\n");
     const blob = new Blob([headers + rows], { type: "text/csv" });
@@ -155,7 +175,7 @@ export default function TransactionLedger() {
                 : "bg-card text-muted-foreground border-border hover:text-foreground"
             }`}
           >
-            {f.toUpperCase()} {f !== "all" && `(${entries.filter((e) => e.status === f).length})`}
+            {statusLabel[f]} {f !== "all" && `(${entries.filter((e) => e.status === f).length})`}
           </button>
         ))}
       </div>
@@ -169,6 +189,11 @@ export default function TransactionLedger() {
             </div>
           ))}
         </div>
+      ) : error ? (
+        <GlassCard hover={false} className="text-center py-12">
+          <p className="text-base font-editorial font-bold text-foreground">Unable to load the ledger</p>
+          <p className="text-xs text-muted-foreground font-mono mt-1">{error}</p>
+        </GlassCard>
       ) : filtered.length === 0 ? (
         <GlassCard hover={false} className="text-center py-12">
           <BookOpen size={40} className="mx-auto text-muted-foreground mb-3" />

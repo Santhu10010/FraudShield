@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Shield, Activity, BookOpen, LogOut, Scan } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Moon, Sun } from "lucide-react";
 
 export type DashboardPage = "dashboard" | "analyze" | "ledger";
 
@@ -17,6 +19,25 @@ const tabs: ReadonlyArray<readonly [DashboardPage, string, typeof Activity]> = [
 
 export default function Navbar({ currentPage, onNavigate }: NavbarProps) {
   const { signOut, user } = useAuth();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("fraudshield-theme");
+    const dark = savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDark(dark);
+    document.documentElement.classList.toggle("theme-dark", dark);
+    document.documentElement.classList.toggle("theme-light", !dark && Boolean(savedTheme));
+    window.dispatchEvent(new Event("fraudshield-theme-change"));
+  }, []);
+
+  const toggleTheme = () => {
+    const nextIsDark = !isDark;
+    setIsDark(nextIsDark);
+    localStorage.setItem("fraudshield-theme", nextIsDark ? "dark" : "light");
+    document.documentElement.classList.toggle("theme-dark", nextIsDark);
+    document.documentElement.classList.toggle("theme-light", !nextIsDark);
+    window.dispatchEvent(new Event("fraudshield-theme-change"));
+  };
 
   const handleNav = (page: DashboardPage) => {
     onNavigate(page);
@@ -55,13 +76,21 @@ export default function Navbar({ currentPage, onNavigate }: NavbarProps) {
         <div className="flex items-center gap-3">
           <div className="hidden md:flex items-center gap-2">
             <span className="text-xs text-muted-foreground font-mono">{user?.email || "analyst@fraudshield.ai"}</span>
-            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded border border-border bg-muted/60 text-foreground">
+            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded border border-[#C8D6CB] bg-[#EBF0EC] text-[#2D4A36]">
               {user?.role || "ANALYST"}
             </span>
           </div>
           <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            className="flex h-8 w-8 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          >
+            {isDark ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+          <button
             onClick={() => {
-              if (typeof window !== "undefined") localStorage.removeItem("authenticated");
               void signOut();
             }}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted border border-border transition-all cursor-pointer"

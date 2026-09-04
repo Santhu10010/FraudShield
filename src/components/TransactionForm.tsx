@@ -49,21 +49,24 @@ export default function TransactionForm({ onSubmit }: TransactionFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const parsedAmount = Number(amount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount < 0 || !location) return;
     setLoading(true);
     setResult(null);
     setTimeout(() => {
       const time = new Date().toISOString();
-      const res = checkFraud({ amount: parseFloat(amount), location, time, userBehavior: behavior });
+      const res = checkFraud({ amount: parsedAmount, location, time, userBehavior: behavior });
       setResult(res);
       const tx: Transaction = {
         id: `TXN-${Date.now()}`,
         userId: `USR-${Math.floor(Math.random() * 100) + 1}`,
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         location,
         timestamp: time,
         fraudScore: res.score,
         isFraud: res.status === "fraud",
         status: res.status,
+        featureAttribution: res.featureAttribution,
       };
       onSubmit(tx);
       setLoading(false);
