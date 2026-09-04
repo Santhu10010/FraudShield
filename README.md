@@ -1,77 +1,108 @@
-# FraudShield — Enterprise UPI Transaction Fraud Detection System
+# FraudShield
 
-FraudShield is an enterprise-grade real-time transaction monitoring and risk intelligence platform built with Next.js, TypeScript, and Supabase. The platform provides real-time fraud scoring, automated anomaly detection, SHAP-style feature attribution, role-based access control (RBAC), and an administrative audit ledger.
+### Enterprise UPI transaction intelligence
 
----
+FraudShield turns payment telemetry into a focused analyst workspace. Score a transaction, inspect the factors behind the decision, monitor live risk movement, and keep an auditable record of every reviewed event.
 
-## Key Capabilities
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase)](https://supabase.com/)
+[![License](https://img.shields.io/badge/status-active-success)](https://github.com/Santhu10010/fraudshield)
 
-* **Hybrid Fraud Scoring Engine:** Combines deterministic, rule-based heuristics (high-velocity, location anomalies, threshold limits) with predictive ML classification to calculate real-time transaction risk scores ($0\text{--}100$).
-* **SHAP Feature Attribution:** Exposes granular SHAP (SHapley Additive exPlanations) risk breakdowns for flagged transactions to provide immediate context on feature weights (e.g., location mismatch vs. amount spike).
-* **Simulated Real-Time Streaming:** Client-side transaction ingestion with animated ledger updates and instant risk alerts.
-* **Security & Audit Hardening:** Role-based access control (`ADMIN` vs `ANALYST`) and a Supabase-backed transaction ledger with row-level security.
-* **Theme Controls:** Persistent light/dark theme switch in the dashboard navigation. Chart labels and legends adapt to the selected theme.
-* **Clear Status Signals:** Safe, suspicious, and fraud records use consistent green, yellow, and red markers in dashboard status surfaces.
-* **Refined Editorial UI/UX:** Dense, responsive dashboard design with readable typography and focused transaction workflows.
+> A responsive fraud monitoring dashboard with heuristic scoring, animated telemetry, role-aware access, and a persistent light/dark workspace theme.
 
----
+## What you can do
 
-## Tech Stack
+| Workspace | Purpose |
+| --- | --- |
+| **Dashboard** | Scan transaction volume, risk distribution, and seven-day movement at a glance. |
+| **Analyze** | Submit a payment payload and receive an immediate risk score with contributing factors. |
+| **Ledger** | Review, filter, export, and track transactions stored in the audit journal. |
+| **Security Copilot** | Ask for pattern analysis, highest-risk incidents, audit summaries, or mitigations. |
 
-* **Frontend Framework:** Next.js 16, React, TypeScript
-* **Build System:** Next.js with Turbopack in development
-* **Styling & Icons:** Tailwind CSS, Lucide React
-* **Backend & Database:** Supabase (PostgreSQL, Row Level Security, Auth Middleware)
-* **Runtime & Package Manager:** Bun / Node.js
+### Risk language
 
----
+| Marker | Meaning |
+| --- | --- |
+| `SAFE` | Low-risk transaction cleared for settlement. |
+| `SUSPICIOUS` | Anomalous activity requiring analyst review. |
+| `FRAUD` | Critical-risk activity requiring containment. |
 
-## Local Development Setup
+## Highlights
 
-### 1. Prerequisites
-* [Bun](https://bun.sh) ≥ 1.1 (recommended) or Node.js ≥ 20
-* Supabase project for hosted authentication and persistence (optional for offline demo mode)
+- **Heuristic risk engine** using amount, location, time, and behavior signals to produce a `0-100` score.
+- **Explainable decisions** with factor attribution for amount spikes, location mismatch, velocity, and unusual hours.
+- **Live-feeling telemetry** with generated transaction streams, animated alerts, and dashboard charts.
+- **Role-aware access** for `ADMIN` and `ANALYST` users, backed by Supabase Auth and row-level security.
+- **Theme switcher** in the navigation with a persisted light/dark preference and chart-aware contrast.
+- **CSV exports** for selected transaction rows and filtered ledger entries.
 
-### 2. Installation
+## Stack
+
+| Layer | Tools |
+| --- | --- |
+| Application | Next.js 16, React, TypeScript |
+| UI | Tailwind CSS, Framer Motion, Lucide React |
+| Data visualization | Chart.js, react-chartjs-2 |
+| Backend | Supabase Auth, PostgreSQL, Row Level Security |
+| Runtime | Bun or Node.js 20+ |
+
+## Run locally
+
+### Requirements
+
+- [Bun](https://bun.sh) 1.1+ or Node.js 20+
+- A Supabase project for hosted authentication and persistence, or use offline demo mode
+
+### Install and start
+
 ```bash
-# Clone the repository
-git clone [https://github.com/Santhu10010/fraudshield.git](https://github.com/Santhu10010/fraudshield.git)
+git clone https://github.com/Santhu10010/fraudshield.git
 cd fraudshield
-
-# Install dependencies
-bun install
-# or
 npm install
-
-# Create .env.local with your Supabase project values
-NEXT_PUBLIC_SUPABASE_URL="https://<your-project-ref>.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="<your-anon-key>"
-
-bun run dev
-# or
 npm run dev
 ```
 
-The app will be available at `http://localhost:3000`.
+Open [http://localhost:3000](http://localhost:3000).
 
-If you run your own Supabase project, apply the SQL files in
-`supabase/migrations/` in order using the Supabase SQL editor or CLI.
+### Configure Supabase
 
-When the URL is not configured or still points to the repository's placeholder
-value, the app runs in offline demo mode. Use `demo@fraudshield.ai` with
-`demo1234` to enter the dashboard. Transactions are generated locally and are
-not persisted to a remote database in this mode.
+Create `.env.local` in the project root:
 
-### Available checks
+```env
+NEXT_PUBLIC_SUPABASE_URL="https://<your-project-ref>.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="<your-anon-key>"
+```
+
+Apply the SQL files in `supabase/migrations/` in order using the Supabase SQL editor or CLI.
+
+### Offline demo mode
+
+When the Supabase URL is missing or still points to the placeholder backend, the dashboard uses local generated transactions and does not make database requests.
+
+| Field | Demo value |
+| --- | --- |
+| Email | `demo@fraudshield.ai` |
+| Password | `demo1234` |
+
+## Quality checks
 
 ```bash
 npm run lint
 npx tsc --noEmit
 ```
 
-## Project layout
-- `pages/` — Next.js pages
-- `src/components/` — UI components (StatCard, TransactionForm, ledger, …)
-- `src/lib/fraud-engine.ts` — heuristic fraud-scoring logic
-- `src/integrations/supabase/` — Supabase client + generated types
-- `supabase/migrations/` — database schema (auth profiles, transactions, RLS)
+## Repository map
+
+```text
+pages/                         Next.js routes and application shell
+src/components/                Dashboard, charts, ledger, forms, and navigation
+src/contexts/                  Authentication state and session handling
+src/integrations/supabase/     Supabase clients and generated database types
+src/lib/fraud-engine.ts        Fraud scoring and transaction generation
+supabase/migrations/            Database schema, roles, and row-level security
+```
+
+## Project status
+
+FraudShield is an active prototype focused on analyst workflows and explainable transaction scoring. Hosted persistence requires valid Supabase credentials; the local demo path is available for UI evaluation without a backend.
